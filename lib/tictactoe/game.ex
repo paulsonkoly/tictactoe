@@ -29,6 +29,7 @@ defmodule TicTacToe.Game do
   """
 
   defmodule State do
+    @moduledoc false
     # construct the initial board
     keys  = for x <- 0..2, y <- 0..2, do: {x, y}
     board = keys |> Enum.reduce(%{}, fn(k, h) -> Map.put(h, k, :empty) end)
