@@ -15,7 +15,7 @@ defmodule TicTacToe.Game do
   :empty
 
   # there isn't a winner either
-  iex> new_game() |> winner
+  iex> new_game() |> winner()
   :nobody
 
   # place an X on the top left corner
@@ -54,7 +54,13 @@ defmodule TicTacToe.Game do
 
   @doc "Returns the winner if there is one. Otherwise returns `:nobody`."
   def winner(state) do
-    :nobody
+    x_won = 0..2 |> Enum.map(fn _ -> :player_x end)
+    y_won = 0..2 |> Enum.map(fn _ -> :player_o end)
+    cond do
+      state |> lines |> Enum.any?(&(&1 == x_won)) -> :player_x
+      state |> lines |> Enum.any?(&(&1 == y_won)) -> :player_y
+      true -> :nobody
+    end
   end
 
   @doc """
@@ -73,4 +79,30 @@ defmodule TicTacToe.Game do
 
   defp opponent(:player_x), do: :player_o
   defp opponent(:player_o), do: :player_x
+
+  defp rows(state) do
+    for y <- 0..2 do
+      for x <- 0..2 do
+        state |> query(x, y)
+      end
+    end
+  end
+
+  defp columns(state) do
+    for x <- 0..2 do
+      for y <- 0..2 do
+        state |> query(x, y)
+      end
+    end
+  end
+
+  defp diagonals(state) do
+    a = for x <- 0..2, do: state |> query(x, x)
+    b = for x <- 0..2, do: state |> query(x, 2-x)
+    [a,b]
+  end
+
+  defp lines(state) do
+    rows(state) ++ columns(state) ++ diagonals(state)
+  end
 end
