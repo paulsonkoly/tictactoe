@@ -67,18 +67,20 @@ defmodule TicTacToe.Game do
   Makes a move for the player who is next. Raises an error if the move is not
   possible because the position is occupied or the game has ended.
   """
-  def update(state = %State{ next_player: next, board: board}, x, y) do
-    if state |> winner != :nobody do
-      raise "game has already ended"
-    else
-      case who = query(state, x, y) do
-        :empty ->
-          state
-          |> Map.put(:next_player, opponent(next))
-          |> Map.put(:board, %{board | {x, y} => next } )
-        _-> raise "position #{x}, #{y} is already occupied by #{who}"
-      end
+  def update(state, x, y) do
+    cond do
+      state |> winner != :nobody -> raise "game has already ended"
+      state |> query(x, y) != :empty ->
+        who = state |> query(x, y)
+        raise "position #{x}, #{y} is already occupied by #{who}"
+      true -> state |> make_update!(x, y)
     end
+  end
+
+  defp make_update!(state = %State{ next_player: next, board: board}, x, y) do
+    state
+    |> Map.put(:next_player, opponent(next))
+    |> Map.put(:board, %{board | {x, y} => next } )
   end
 
   defp opponent(:player_x), do: :player_o
