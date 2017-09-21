@@ -64,7 +64,9 @@ defmodule TicTacToe.Game do
   def update(state = %State{ next_player: next, board: board}, x, y) do
     case who = query(state, x, y) do
       :empty ->
-        %State{ next_player: opponent(next), board: %{board | {x, y} => next} }
+        state
+        |> Map.put(:next_player, opponent(next))
+        |> Map.put(:board, %{board | {x, y} => next } )
       _-> raise "position #{x}, #{y} is already occupied by #{who}"
     end
   end
