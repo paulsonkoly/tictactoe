@@ -58,7 +58,7 @@ defmodule TicTacToe.Game do
     y_won = 0..2 |> Enum.map(fn _ -> :player_o end)
     cond do
       state |> lines |> Enum.any?(&(&1 == x_won)) -> :player_x
-      state |> lines |> Enum.any?(&(&1 == y_won)) -> :player_y
+      state |> lines |> Enum.any?(&(&1 == y_won)) -> :player_o
       true -> :nobody
     end
   end
