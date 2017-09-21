@@ -11,16 +11,20 @@ defmodule TicTacToe.Game do
 
   ```
   # after creating a new game position 1, 2 is empty
-  Game.new_game |> query(1, 2) # => :empty
+  iex> new_game() |> query(1, 2)
+  :empty
 
   # there isn't a winner either
-  Game.new_game |> winner # => :nobody
+  iex> new_game() |> winner
+  :nobody
 
   # place an X on the top left corner
-  Game.new_game |> update(0, 0) |> query(0, 0) # => :player_x
+  iex> new_game() |> update(0, 0) |> query(0, 0)
+  :player_x
 
   # after a move it's the opposite players turn
-  Game.new_game |> update(0, 0) |> whos_next # => :player_o
+  iex> new_game() |> update(0, 0) |> whos_next
+  :player_o
   ```
   """
 
