@@ -2,13 +2,14 @@ defmodule TicTacToe.Game do
   @moduledoc """
   The state of a tic tac toe game.
 
-  Create a new state with +new_game+. Once a game has been created you
-  can +query+ a position on the board, place new marks on the board or query
-  whose turn it is. If the game has finished +winner+ should return the winning
-  player, otherwise it returns :nobody.
+  Create a new state with `new_game`. Once a game has been created you
+  can `query` a position on the board, place new marks on the board or query
+  whose turn it is. If the game has finished `winner` should return the winning
+  player, otherwise it returns `:nobody`.
 
-  == Example
+  ## Example
 
+  ```
   # after creating a new game position 1, 2 is empty
   Game.new_game |> query(1, 2) # => :empty
 
@@ -20,9 +21,10 @@ defmodule TicTacToe.Game do
 
   # after a move it's the opposite players turn
   Game.new_game |> update(0, 0) |> whos_next # => :player_o
+  ```
   """
 
-  @doc "Creates a new game with an empty board and :player_x to make a move."
+  @doc "Creates a new game with an empty board and `:player_x` to make a move."
   def new_game do
   end
 
@@ -34,7 +36,7 @@ defmodule TicTacToe.Game do
   def whos_next(state) do
   end
 
-  @doc "Returns the winner if there is one. Otherwise returns :nobody."
+  @doc "Returns the winner if there is one. Otherwise returns `:nobody`."
   def winner(state) do
   end
 
