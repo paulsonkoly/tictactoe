@@ -68,12 +68,16 @@ defmodule TicTacToe.Game do
   possible because the position is occupied or the game has ended.
   """
   def update(state = %State{ next_player: next, board: board}, x, y) do
-    case who = query(state, x, y) do
-      :empty ->
-        state
-        |> Map.put(:next_player, opponent(next))
-        |> Map.put(:board, %{board | {x, y} => next } )
-      _-> raise "position #{x}, #{y} is already occupied by #{who}"
+    if state |> winner != :nobody do
+      raise "game has already ended"
+    else
+      case who = query(state, x, y) do
+        :empty ->
+          state
+          |> Map.put(:next_player, opponent(next))
+          |> Map.put(:board, %{board | {x, y} => next } )
+        _-> raise "position #{x}, #{y} is already occupied by #{who}"
+      end
     end
   end
 

@@ -31,4 +31,14 @@ defmodule TicTacToe.GameTest do
            |> Game.update(2, 0)
     assert Game.winner(game) == :player_x
   end
+
+  test "when a player wins we cannot update the board" do
+    game = Game.new_game
+           |> Game.update(0, 0)
+           |> Game.update(0, 1)
+           |> Game.update(1, 0)
+           |> Game.update(1, 1)
+           |> Game.update(2, 0)
+    catch_error game |> Game.update(2, 2)
+  end
 end
