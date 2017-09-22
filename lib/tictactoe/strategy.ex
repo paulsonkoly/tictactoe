@@ -14,49 +14,61 @@ defmodule TicTacToe.Strategy do
   Calculates the next move of the AI
 
   Returns a tuple with the evaluation and the calculated move list that's
-  considered a best path for both players. `move_list` is the accumulator in
-  the recursion.
-
-  ## Example
-
-  ```
-  iex> Game.new_game |> next_move
-  0
+  considered a best path for both players.
   ```
   """
-  def next_move(state, player \\ 1, alpha \\ -10, beta \\ 10) do
+  def next_move(state) do
+    next = case Game.whos_next state do
+      :player_x -> 1
+      :player_y -> -1
+    end
+    negascout(state, next, -10, 10)
+  end
+
+  defp negascout(state, player, alpha, beta) do
     if state |> Game.finished? do
       # exit of the recursion, the game is finished, no need to calculate any
       # further
-      player * evaluate(state)
+      { player * evaluate(state), [] }
     else
       state |> Game.moves |> negascout_loop(state, player, alpha, beta, true)
    end
   end
 
-  defp negascout_loop(loop_list, state, player, alpha, beta, first \\ false)
-  defp negascout_loop([], _, _, alpha, _, _), do: alpha
-  defp negascout_loop([move|loop_list], state, player, alpha, beta, first) do
-    score = if first do
-      -next_move(Game.update(state, move), -player, -beta, -alpha)
+  defp negascout_loop(_, _, _, _, _, _ \\ false, _ \\ [])
+  defp negascout_loop([], _, _, alpha, _, _, ml), do: { alpha, ml }
+  defp negascout_loop([move|loop_list], state, player, alpha, beta, first, pl) do
+    { score, ml } = if first do
+      # initial search
+      Game.update(state, move)
+      |> negascout(-player, -beta, -alpha)
+      |> negate
     else
       # null window search
-      score = -next_move(Game.update(state, move), -player, -alpha - 1, -alpha)
+      { score, ml} = Game.update(state, move)
+                     |> negascout(-player, -alpha - 1, -alpha)
+                     |> negate
       if alpha < score && score < beta do
         # full search
-        -next_move(Game.update(state, move), -player, -beta, -score)
+        Game.update(state, move)
+                        |> negascout(-player, -beta, -score)
+                        |> negate
       else
-        score
+        { score, ml }
       end
     end
-    alpha = max(alpha, score)
+    { alpha, ml } = if score > alpha, do: {score, ml}, else: {alpha, pl}
     if alpha >= beta do
       # beta cut off
-      alpha
+      { alpha, [move|ml] }
     else
-      negascout_loop(loop_list, state, player, alpha, beta)
+      negascout_loop(loop_list, state, player, alpha, beta, ml)
+      |> append(move)
     end
   end
+
+  defp negate({score, movelist}), do: {-score, movelist}
+  defp append({score, movelist}, move), do: {score, [move|movelist]}
 
   @doc """
   Calculates the evaluation of a finishing position
