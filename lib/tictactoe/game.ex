@@ -34,7 +34,7 @@ defmodule TicTacToe.Game do
     keys  = for x <- 0..2, y <- 0..2, do: {x, y}
     board = keys |> Enum.reduce(%{}, fn(k, h) -> Map.put(h, k, :empty) end)
 
-    defstruct next_player: :player_x, board: board
+    defstruct next_player: :player_x, counter: 0, board: board
   end
 
   @doc "Creates a new game with an empty board and `:player_x` to make a move."
@@ -64,8 +64,10 @@ defmodule TicTacToe.Game do
   end
 
   @doc """
-  Makes a move for the player who is next. Raises an error if the move is not
-  possible because the position is occupied or the game has ended.
+  Makes a move for the player who is next.
+
+  Raises an error if the move is not possible because the position is occupied
+  or the game has ended.
   """
   def update(state, x, y) do
     cond do
@@ -77,10 +79,21 @@ defmodule TicTacToe.Game do
     end
   end
 
-  defp make_update!(state = %State{ next_player: next, board: board}, x, y) do
+  defp make_update!(state, x, y) do
     state
-    |> Map.put(:next_player, opponent(next))
-    |> Map.put(:board, %{board | {x, y} => next } )
+    |> Map.put(:counter, state.counter + 1)
+    |> Map.put(:next_player, opponent(state.next_player))
+    |> Map.put(:board, %{state.board | {x, y} => state.next_player } )
+  end
+
+  @doc """
+  Is the game finished
+
+  The game is finished either becasue one of the players has won or the board
+  is full.
+  """
+  def finished?(state) do
+    state.counter == 9 || winner(state) != :nobody
   end
 
   defp opponent(:player_x), do: :player_o

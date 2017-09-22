@@ -41,4 +41,15 @@ defmodule TicTacToe.GameTest do
            |> Game.update(2, 0)
     catch_error game |> Game.update(2, 2)
   end
+
+  test "when the board is full the game is finished" do
+    # X O X
+    # O O X
+    # X X O
+    game = Game.new_game
+           |> Game.update(0,0) |> Game.update(1, 0) |> Game.update(2, 0)
+           |> Game.update(1,1) |> Game.update(1, 2) |> Game.update(0, 1)
+           |> Game.update(2,1) |> Game.update(2, 2) |> Game.update(0, 2)
+    assert game |> Game.finished?
+  end
 end
