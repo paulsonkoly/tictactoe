@@ -69,6 +69,7 @@ defmodule TicTacToe.Game do
   Raises an error if the move is not possible because the position is occupied
   or the game has ended.
   """
+  def update(state, {x, y}), do: update(state, x, y)
   def update(state, x, y) do
     cond do
       state |> winner != :nobody -> raise "game has already ended"
