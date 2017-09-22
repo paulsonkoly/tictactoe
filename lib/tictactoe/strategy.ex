@@ -31,32 +31,18 @@ defmodule TicTacToe.Strategy do
       # further
       { player * evaluate(state), [] }
     else
-      state |> Game.moves |> negascout_loop(state, player, alpha, beta, true)
+      state
+      |> Game.moves
+      |> negascout_loop(state, player, alpha, beta, true)
    end
   end
 
   defp negascout_loop(_, _, _, _, _, _ , _ \\ [], _ \\ nil)
   defp negascout_loop([], _, _, alpha, _, _, ml, m), do: { alpha, [m | ml] }
   defp negascout_loop([move|loop_list], state, player, alpha, beta, first, pl, pm) do
-    { score, ml } = if first do
-      # initial search
-      Game.update(state, move)
-      |> negascout(-player, -beta, -alpha)
-      |> negate
-    else
-      # null window search
-      { score, ml} = Game.update(state, move)
-                     |> negascout(-player, -alpha - 1, -alpha)
-                     |> negate
-      if alpha < score && score < beta do
-        # full search
-        Game.update(state, move)
-                        |> negascout(-player, -beta, -score)
-                        |> negate
-      else
-        { score, ml }
-      end
-    end
+    {score, ml } = state
+                   |> negascout_search(move, player, alpha, beta, first)
+    # update alpha
     { alpha, ml, pm } = if score > alpha, do: {score, ml, move},
                                           else: {alpha, pl, pm}
     if alpha >= beta do
@@ -68,6 +54,29 @@ defmodule TicTacToe.Strategy do
   end
 
   defp negate({score, movelist}), do: {-score, movelist}
+
+  defp negascout_recurse(state, move, player, alpha, beta) do
+    state
+    |> Game.update(move)
+    |> negascout(player, alpha, beta)
+    |> negate
+  end
+
+  defp negascout_search(state, move, player, alpha, beta, true) do
+    # initial search
+    state |> negascout_recurse(move, -player, -beta, -alpha)
+  end
+  defp negascout_search(state, move, player, alpha, beta, false) do
+    # null window search
+    { score, ml} = state
+                   |> negascout_recurse(move, -player, -alpha - 1, -alpha)
+    if alpha < score && score < beta do
+      # full search
+      state |> negascout_recurse(move, -player, -beta, -score)
+    else
+      { score, ml }
+    end
+  end
 
   @doc """
   Calculates the evaluation of a finishing position
