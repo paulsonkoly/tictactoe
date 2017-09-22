@@ -31,21 +31,21 @@ defmodule TicTacToe.Negascout do
   effectively +infinity. `node` has to implement the `TicTacToe.Negascout.Node`
   protocol.
   """
-  def negascout(state, player, alpha, beta) do
-    move_list = state |> Node.moves
+  def negascout(node, player, alpha, beta) do
+    move_list = node |> Node.moves
     if Enum.empty? move_list do
       # exit of the recursion, the game is finished, no need to calculate any
       # further
-      { player * Node.evaluate(state), [] }
+      { player * Node.evaluate(node), [] }
     else
-      move_list |> negascout_loop(state, player, alpha, beta, true)
+      move_list |> negascout_loop(node, player, alpha, beta, true)
     end
   end
 
   defp negascout_loop(_, _, _, _, _, _ , _ \\ [], _ \\ nil)
   defp negascout_loop([], _, _, alpha, _, _, ml, m), do: { alpha, [m | ml] }
-  defp negascout_loop([move|loop_list], state, player, alpha, beta, first, pl, pm) do
-    {score, ml } = state
+  defp negascout_loop([move|loop_list], node, player, alpha, beta, first, pl, pm) do
+    {score, ml } = node
                    |> negascout_search(move, player, alpha, beta, first)
     # update alpha
     { alpha, ml, pm } = if score > alpha, do: {score, ml, move},
@@ -54,30 +54,30 @@ defmodule TicTacToe.Negascout do
       # beta cut off
       { alpha, [move|ml] }
     else
-      negascout_loop(loop_list, state, player, alpha, beta, false, ml, pm)
+      negascout_loop(loop_list, node, player, alpha, beta, false, ml, pm)
     end
   end
 
   defp negate({score, movelist}), do: {-score, movelist}
 
-  defp negascout_recurse(state, move, player, alpha, beta) do
-    state
+  defp negascout_recurse(node, move, player, alpha, beta) do
+    node
     |> Node.make_move(move)
     |> negascout(player, alpha, beta)
     |> negate
   end
 
-  defp negascout_search(state, move, player, alpha, beta, true) do
+  defp negascout_search(node, move, player, alpha, beta, true) do
     # initial search
-    state |> negascout_recurse(move, -player, -beta, -alpha)
+    node |> negascout_recurse(move, -player, -beta, -alpha)
   end
-  defp negascout_search(state, move, player, alpha, beta, false) do
+  defp negascout_search(node, move, player, alpha, beta, false) do
     # null window search
-    { score, ml} = state
+    { score, ml} = node
                    |> negascout_recurse(move, -player, -alpha - 1, -alpha)
     if alpha < score && score < beta do
       # full search
-      state |> negascout_recurse(move, -player, -beta, -score)
+      node |> negascout_recurse(move, -player, -beta, -score)
     else
       { score, ml }
     end
