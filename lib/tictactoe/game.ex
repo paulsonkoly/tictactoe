@@ -96,6 +96,14 @@ defmodule TicTacToe.Game do
     state.counter == 9 || winner(state) != :nobody
   end
 
+  @doc """
+  The possible moves on a given board
+  """
+  def moves(state) do
+    coords = for x <- 0..2, y <- 0..2, do: {x, y}
+    coords |> Enum.filter(fn {x, y} -> state |> query(x, y) == :empty end)
+  end
+
   defp opponent(:player_x), do: :player_o
   defp opponent(:player_o), do: :player_x
 

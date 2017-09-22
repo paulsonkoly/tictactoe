@@ -52,4 +52,8 @@ defmodule TicTacToe.GameTest do
            |> Game.update(2,1) |> Game.update(2, 2) |> Game.update(0, 2)
     assert game |> Game.finished?
   end
+
+  test "on a fresh board every move is possible" do
+    assert Game.new_game |> Game.moves |> Enum.count == 9
+  end
 end
