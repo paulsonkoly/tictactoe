@@ -1,5 +1,5 @@
 defmodule TicTacToe.StrategyTest do
-  alias TicTacToe.{Strategy, Game}
+  alias TicTacToe.{Strategy, Game, Negascout}
 
   use ExUnit.Case, async: true
   doctest TicTacToe.Strategy, import: true
@@ -15,7 +15,7 @@ defmodule TicTacToe.StrategyTest do
            |> Game.update(1, 0)
            |> Game.update(1, 1)
            |> Game.update(2, 0)
-    assert game |> Strategy.evaluate == 1
+    assert game |> Negascout.Node.evaluate == 1
   end
 
   test "when it's a draw the evaluation is 0" do
@@ -26,6 +26,6 @@ defmodule TicTacToe.StrategyTest do
            |> Game.update(0,0) |> Game.update(1, 0) |> Game.update(2, 0)
            |> Game.update(1,1) |> Game.update(1, 2) |> Game.update(0, 1)
            |> Game.update(2,1) |> Game.update(2, 2) |> Game.update(0, 2)
-    assert game |> Strategy.evaluate == 0
+    assert game |> Negascout.Node.evaluate == 0
   end
 end
