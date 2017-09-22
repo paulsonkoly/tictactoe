@@ -20,7 +20,7 @@ defmodule TicTacToe.Strategy do
   def next_move(state) do
     next = case Game.whos_next state do
       :player_x -> 1
-      :player_y -> -1
+      :player_o -> -1
     end
     negascout(state, next, -10, 10)
   end
@@ -35,9 +35,9 @@ defmodule TicTacToe.Strategy do
    end
   end
 
-  defp negascout_loop(_, _, _, _, _, _ \\ false, _ \\ [])
-  defp negascout_loop([], _, _, alpha, _, _, ml), do: { alpha, ml }
-  defp negascout_loop([move|loop_list], state, player, alpha, beta, first, pl) do
+  defp negascout_loop(_, _, _, _, _, _ , _ \\ [], _ \\ nil)
+  defp negascout_loop([], _, _, alpha, _, _, ml, m), do: { alpha, [m | ml] }
+  defp negascout_loop([move|loop_list], state, player, alpha, beta, first, pl, pm) do
     { score, ml } = if first do
       # initial search
       Game.update(state, move)
@@ -57,18 +57,17 @@ defmodule TicTacToe.Strategy do
         { score, ml }
       end
     end
-    { alpha, ml } = if score > alpha, do: {score, ml}, else: {alpha, pl}
+    { alpha, ml, pm } = if score > alpha, do: {score, ml, move},
+                                          else: {alpha, pl, pm}
     if alpha >= beta do
       # beta cut off
       { alpha, [move|ml] }
     else
-      negascout_loop(loop_list, state, player, alpha, beta, ml)
-      |> append(move)
+      negascout_loop(loop_list, state, player, alpha, beta, false, ml, pm)
     end
   end
 
   defp negate({score, movelist}), do: {-score, movelist}
-  defp append({score, movelist}, move), do: {score, [move|movelist]}
 
   @doc """
   Calculates the evaluation of a finishing position
