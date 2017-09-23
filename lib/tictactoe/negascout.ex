@@ -40,7 +40,7 @@ defmodule TicTacToe.Negascout do
 
   defp negascout_intern(node, player, alpha, beta, state) do
     move_list = node |> Node.moves
-    if Enum.empty? move_list || state.depth == 0 do
+    if Enum.empty?(move_list) or state.depth == 0 do
       # exit of the recursion, the game is finished, no need to calculate any
       # further
       { player * Node.evaluate(node), [] }
