@@ -33,6 +33,6 @@ defmodule TicTacToe.Strategy do
       :player_x -> 1
       :player_o -> -1
     end
-    Negascout.negascout(state, next, -10, 10)
+    Negascout.negascout(state, 10, next, -10, 10)
   end
 end
