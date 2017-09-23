@@ -3,9 +3,9 @@ defmodule TicTacToe.Negascout do
   Generic Negascout algorithm
 
   For information on the negascout algorithm please refer to
-  https://en.wikipedia.org/wiki/Principal_variation_search. Before you can use
-  this module you have to implement the `TicTacToe.Negascout.Node` protocol for
-  your type.
+  [wikipedia](https://en.wikipedia.org/wiki/Principal_variation_search). Before
+  you can use this module you have to implement the `TicTacToe.Negascout.Node`
+  protocol for your type.
   """
 
   defprotocol Node do
